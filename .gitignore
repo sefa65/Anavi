@@ -57,3 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
+
+# Identification info and role and server ids
+auth.json
+allowed.json
