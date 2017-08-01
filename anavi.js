@@ -1,8 +1,11 @@
+#!/usr/bin/node
 var Discordbot = require('discord.io');
 
 var auth = require("./auth.json");
 
 var authorizedRole = require ("./allowed.json")
+
+var event_gen = require("./event_gen.json")
 
 var bot = new Discordbot.Client({
 	token : auth.token,
@@ -74,7 +77,9 @@ bot.on('message', function (user, userID, channelID, message, event){
 				var retour = "Les commandes disponibles sont :\nLe timeout entre deux commandes est de " + (timeout / 1000) + " secondes";
 			}
 			
-			
+			if (command == "event" && arguments[0] in event_gen){
+				retour = event_gen[arguments[0]][Math.floor(Math.random() * event_gen[arguments[0]].length)];
+			}	
 
 			// send message loop
 			if (retour != ""){
