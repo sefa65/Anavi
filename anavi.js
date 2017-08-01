@@ -1,11 +1,9 @@
-#!/usr/bin/node
+<<<<<<< .mine
 var Discordbot = require('discord.io');
 
 var auth = require("./auth.json");
 
 var authorizedRole = require ("./allowed.json")
-
-var event_gen = require("./event_gen.json")
 
 var bot = new Discordbot.Client({
 	token : auth.token,
@@ -61,8 +59,8 @@ bot.on('message', function (user, userID, channelID, message, event){
 			
 			if (command == "anavi"){
 				retour = arguments.join(" ");
-			}
-	
+			}	
+			
 			if (command == "roll" || command == "r"){
 				var subargs;
 				if (arguments[0]!=undefined){
@@ -71,8 +69,27 @@ bot.on('message', function (user, userID, channelID, message, event){
 					subargs = [1,100];
 				}
 				var retour = "Lancement de " + subargs[0] + " dés à " + subargs[1] + " faces :\n";
-				for (i=0; i<subargs[0];i++){
-					retour += Math.floor((Math.random() * subargs[1]) + 1) + " ";
+
+				if(arguments[1]!=undefined) {
+					var argSup = arguments[1].split(">");
+					if(argSup[0].length == 0) {
+						var limit = Number(argSup[1]);
+
+						var count = 0;
+						for (i=0; i<subargs[0];i++) {
+							if(Math.floor((Math.random() * subargs[1]) + 1) > limit) {
+								count++;
+							}
+							retour += Math.floor((Math.random() * subargs[1]) + 1) + " ";
+						}
+
+						retour += "\n" + count + " succès.";
+					}
+
+				} else {
+					for (i=0; i<subargs[0];i++){
+						retour += Math.floor((Math.random() * subargs[1]) + 1) + " ";
+					}
 				}
 			}
 			
@@ -83,7 +100,9 @@ bot.on('message', function (user, userID, channelID, message, event){
 			
 			if (command == "event" && arguments[0] in event_gen){
 				retour = event_gen[arguments[0]][Math.floor(Math.random() * event_gen[arguments[0]].length)];
-			}	
+			}
+			
+			
 
 			// send message loop
 			if (retour != ""){
