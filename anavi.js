@@ -78,10 +78,11 @@ bot.on('message', function (user, userID, channelID, message, event){
 
 						var count = 0;
 						for (i=0; i<subargs[0];i++) {
-							if(Math.floor((Math.random() * subargs[1]) + 1) > limit) {
+							var nb = Math.floor((Math.random() * subargs[1]) + 1);
+							if(nb > limit) {
 								count++;
 							}
-							retour += Math.floor((Math.random() * subargs[1]) + 1) + " ";
+							retour += nb + " ";
 						}
 
 						retour += "\n" + count + " succès.";
