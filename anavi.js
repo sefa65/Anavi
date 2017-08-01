@@ -2,7 +2,9 @@ var Discordbot = require('discord.io');
 
 var auth = require("./auth.json");
 
-var authorizedRole = require ("./allowed.json")
+var authorizedRole = require ("./allowed.json");
+
+var event_gen = require ("./event_gen.json");
 
 var bot = new Discordbot.Client({
 	token : auth.token,
