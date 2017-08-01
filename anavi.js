@@ -59,6 +59,10 @@ bot.on('message', function (user, userID, channelID, message, event){
 				retour = ":regional_indicator_p: :regional_indicator_o: :regional_indicator_n: :regional_indicator_g: !";
 			}
 			
+			if (command == "anavi"){
+				retour = arguments.join(" ");
+			}
+	
 			if (command == "roll" || command == "r"){
 				var subargs;
 				if (arguments[0]!=undefined){
