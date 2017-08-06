@@ -65,6 +65,10 @@ bot.on('message', function (user, userID, channelID, message, event){
 			
 			if (command == "anavi"){
 				retour = arguments.join(" ");
+				bot.deleteMessage({
+					channelID: channelID,
+					messageID: event.d.id
+				});
 			}	
 			/*
 			if (command == "IDs"){
