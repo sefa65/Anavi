@@ -82,7 +82,7 @@ bot.on('message', function (user, userID, channelID, message, event){
 				} else{
 					subargs = [1,100];
 				}
-				var retour = "Lancement de " + subargs[0] + " dés à " + subargs[1] + " faces :\n";
+				var retour = "Lancement de " + subargs[0] + " dés à " + subargs[1] + " faces :\n```\n";
 
 				if(arguments[1]!=undefined) {
 					var argSup = arguments[1].split(">");
@@ -98,14 +98,20 @@ bot.on('message', function (user, userID, channelID, message, event){
 							retour += nb + " ";
 						}
 
-						retour += "\n" + count + " succès.";
+						retour += "\n```\n**" + count + " Succès.**";
 					}
 
 				} else {
 					for (i=0; i<subargs[0];i++){
 						retour += Math.floor((Math.random() * subargs[1]) + 1) + " ";
 					}
+					retour += "\n```";
 				}
+
+				bot.deleteMessage({
+                                        channelID: channelID,
+                                        messageID: event.d.id
+                                });
 			}
 			
 			if (command == "info"){
