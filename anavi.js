@@ -33,15 +33,21 @@ function userIsAuthorized(userID,serverID){
 }
 
 bot.on('message', function (user, userID, channelID, message, event){
+	var retour = "";
 	//administration command
-	if (message.substring(0,1) == "."){
+	if (message.substring(0,1) == "." && userIsAuthorized(userID,bot.channels[channelID].guild_id)){
 		var arguments = message.substring(1).split(" ");
 		var command = arguments[0];
 		arguments = arguments.splice(1).join(" ");
-		if (command == "timeout" && userIsAuthorized(userID)){
+		if (command == "timeout"){
 			timeout = arguments[0];
 			console.log("Timeout set to :"+arguments[0]);
 		}
+		/*
+		if (command == "test"){
+			retour = "toto";
+		}
+		*/
 	}
 	
 	//normal command
@@ -52,7 +58,6 @@ bot.on('message', function (user, userID, channelID, message, event){
 			var arguments = message.substring(1).split(" ");
 			var command = arguments[0];
 			arguments = arguments.splice(1);
-			var retour = "";
 			
 			if (command == "ping"){
 				retour = ":regional_indicator_p: :regional_indicator_o: :regional_indicator_n: :regional_indicator_g: !";
@@ -61,7 +66,11 @@ bot.on('message', function (user, userID, channelID, message, event){
 			if (command == "anavi"){
 				retour = arguments.join(" ");
 			}	
-			
+			/*
+			if (command == "IDs"){
+				retour = "serverID => " + bot.channels[channelID].guild_id + " channelID => " + channelID + " userID => " + userID + " messageID => " +event.d.id ;
+			}
+			*/
 			if (command == "roll" || command == "r"){
 				var subargs;
 				if (arguments[0]!=undefined){
@@ -103,17 +112,15 @@ bot.on('message', function (user, userID, channelID, message, event){
 			if (command == "event" && arguments[0] in event_gen){
 				retour = event_gen[arguments[0]][Math.floor(Math.random() * event_gen[arguments[0]].length)];
 			}
-			
-			
+		}	
+	}		
 
-			// send message loop
-			if (retour != ""){
-				bot.sendMessage({
-					to: channelID,
-					message: retour
-				});
-				lastcommandtime = Date.now();
-			}
-		}
+	// send message loop
+	if (retour != ""){
+		bot.sendMessage({
+			to: channelID,
+			message: retour
+		});
+		lastcommandtime = Date.now();
 	}
 });
