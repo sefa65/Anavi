@@ -13,14 +13,29 @@ var bot = new Discordbot.Client({
 
 var lastcommandtime = 0;
 var timeout = 500;
+var defaultChannel;
+var roleAdmins;
+var server;
 
 
 const FS = require('fs');
 bot.on('ready', function() {
     console.log(bot.username + " - (" + bot.id + ")\n");
 	Object.keys(bot.servers).forEach(function(key) {
-		var server = bot.servers[key];
+		server = bot.servers[key];
 		console.log( "connected to " + server.name + " - (" + server.id + ")\n");
+
+		Object.keys(bot.channels).map(function(objectKey, index) {
+			if(bot.channels[objectKey].name == "home_canal") {
+				defaultChannel = bot.channels[objectKey];
+			}
+		});
+
+		Object.keys(server.roles).map(function(objectKey, index) {
+			if(server.roles[objectKey].name == "CONTEURS") {
+				roleAdmins = server.roles[objectKey];
+			}
+		});
 	});
 });
 
@@ -34,6 +49,7 @@ function userIsAuthorized(userID,serverID){
 
 bot.on('message', function (user, userID, channelID, message, event){
 	var retour = "";
+
 	//administration command
 	if (message.substring(0,1) == "." && userIsAuthorized(userID,bot.channels[channelID].guild_id)){
 		var arguments = message.substring(1).split(" ");
@@ -82,7 +98,8 @@ bot.on('message', function (user, userID, channelID, message, event){
 				} else{
 					subargs = [1,100];
 				}
-				var retour = "Lancement de " + subargs[0] + " dés à " + subargs[1] + " faces :\n```\n";
+
+				var retour = "<@!"+userID+"> lance " + subargs[0] + " dés à " + subargs[1] + " faces :\n```\n";
 
 				if(arguments[1]!=undefined) {
 					var argSup = arguments[1].split(">");
@@ -98,7 +115,7 @@ bot.on('message', function (user, userID, channelID, message, event){
 							retour += nb + " ";
 						}
 
-						retour += "\n```\n**" + count + " Succès.**";
+						retour += "\n```\n**" + count + " Succès à difficulté de " +limit+ ".**";
 					}
 
 				} else {
@@ -133,4 +150,14 @@ bot.on('message', function (user, userID, channelID, message, event){
 		});
 		lastcommandtime = Date.now();
 	}
+});
+
+bot.on('guildMemberAdd', function(member, event) {
+    bot.sendMessage({
+        to: defaultChannel.id,
+        message: "Bienvenue <@!"+member.id+"> sur **"+server.name+"**, le RPG sur Discord.\n"+
+        "Envie de découvrir ou nous rejoindre ? N'hésite pas à contacter un des <@&"+roleAdmins.id+">.\n\n"+
+        "*Une nouvelle terre pour l'Arbre de la Vie\n"+
+        "Un nouveau départ pour l'humanité*"
+    });
 });

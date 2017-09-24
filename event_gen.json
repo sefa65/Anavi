@@ -1,3 +1,4 @@
 {
-	"planete":["terrestre","oceanique","volcanique","morte","gazeuse","martienne","glacee"]
+	"planete":["terrestre","oceanique","volcanique","morte","gazeuse","martienne","glacee"],
+	"weather":["Nuageux", "Ensoleillé", "Neige", "Grêle", "Pluvieux", "Vent", "Brume", "Brouillard", "Orageux", "Tornade"]
 }
