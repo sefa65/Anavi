@@ -1,5 +1,8 @@
 var Discordbot = require('discord.io');
 
+var CronJob = require('cron').CronJob;
+var cron = require("./cron.json");
+
 var auth = require("./auth.json");
 
 var authorizedRole = require ("./allowed.json");
@@ -20,7 +23,7 @@ var server;
 
 const FS = require('fs');
 bot.on('ready', function() {
-    console.log(bot.username + " - (" + bot.id + ")\n");
+	console.log(bot.username + " - (" + bot.id + ")\n");
 	Object.keys(bot.servers).forEach(function(key) {
 		server = bot.servers[key];
 		console.log( "connected to " + server.name + " - (" + server.id + ")\n");
@@ -37,7 +40,22 @@ bot.on('ready', function() {
 			}
 		});
 	});
+	new CronJob("* * 0 * * *", checkMessage());
 });
+
+function checkMessage(){
+	for(var i = 0; i < cron.length; i++){
+		var time = cron[i].sendtime;
+		var rappel_message = cron[i].text;
+		var channel_id = cron[i].channel;
+		var now = new Date();
+		var today = now.setHours(0,0,0,0)
+		var day_diff = (time.getTime() - today.getTime) / (1000 * 60 * 60 * 24);
+		if (day_diff < 1){
+			setTimeout(sendMessage, time.getTime() - now.getTime(),channel_id,rappel_message);
+		}
+	}
+}
 
 function userIsAuthorized(userID,serverID){
 	var server = bot.servers[serverID];
@@ -45,6 +63,13 @@ function userIsAuthorized(userID,serverID){
 	var userRoles = server.members[userID].roles;
 	
 	return (userRoles.indexOf(allowed) != -1)
+}
+
+function sendMessage(channel, message_text){
+	bot.sendMessage({
+		to: channel,
+		message: message_text
+                });
 }
 
 bot.on('message', function (user, userID, channelID, message, event){
@@ -59,11 +84,31 @@ bot.on('message', function (user, userID, channelID, message, event){
 			timeout = arguments[0];
 			console.log("Timeout set to :"+arguments[0]);
 		}
-		/*
-		if (command == "test"){
-			retour = "toto";
+
+		if (command == "rappel"){
+			var time = new Date(arguments[0]);
+			var rappel_message = arguments.shift();
+			var now = new Date();
+			var today = now.setHours(0,0,0,0)
+			var day_diff = (time.getTime() - today.getTime) / (1000 * 60 * 60 * 24);
+			if (day_diff < 1){
+				setTimeout(sendMessage, time.getTime() - now.getTime(),channel_id,rappel_message);
+			}
+			else if( day_diff < 0 ){
+				console.log("Ahahah, very funny but no. User " + userID);
+			}
+			else{
+				fs.readFile('cron.json', function (err, data) {
+					cron_message = {
+								sendtime	:	time,
+								text   		:	rappel_message,
+								channel		:	channel_id
+							};
+					cron.push(cron_message); 
+					fs.writeFile("cron.json", JSON.stringify(cron_data))
+				})
+			}
 		}
-		*/
 	}
 	
 	//normal command
