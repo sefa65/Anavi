@@ -1,3 +1,5 @@
+var testgame = require('./mini_game_resources.js');
+
 var Discordbot = require('discord.io');
 
 var auth = require("./auth.json");
@@ -14,9 +16,9 @@ var bot = new Discordbot.Client({
 var lastcommandtime = 0;
 var timeout = 500;
 var defaultChannel;
+var testChannel;
 var roleAdmins;
 var server;
-
 
 const FS = require('fs');
 bot.on('ready', function() {
@@ -29,6 +31,10 @@ bot.on('ready', function() {
 			if(bot.channels[objectKey].name == "home_canal") {
 				defaultChannel = bot.channels[objectKey];
 			}
+
+			if(bot.channels[objectKey].name == "ivanas-room") {
+				testChannel = bot.channels[objectKey];
+			}
 		});
 
 		Object.keys(server.roles).map(function(objectKey, index) {
@@ -36,6 +42,8 @@ bot.on('ready', function() {
 				roleAdmins = server.roles[objectKey];
 			}
 		});
+
+		testgame.MiniGame(0, bot, testChannel);
 	});
 });
 
@@ -138,6 +146,10 @@ bot.on('message', function (user, userID, channelID, message, event){
 			
 			if (command == "event" && arguments[0] in event_gen){
 				retour = event_gen[arguments[0]][Math.floor(Math.random() * event_gen[arguments[0]].length)];
+			}
+			
+			if (command == "vote"){
+				testgame.vote(arguments, bot, channelID, userID);
 			}
 		}	
 	}		
